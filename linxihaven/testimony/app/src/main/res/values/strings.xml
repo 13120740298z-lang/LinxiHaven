@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Calculator Disguise Name -->
+    <string name="app_name_calculator">计算器</string>
+    <string name="app_name_testimony">证言</string>
+
+    <!-- Student Mode -->
+    <string name="welcome_student">你好，欢迎使用证言</string>
+    <string name="security_space_ready">安全空间已就绪</string>
+    <string name="tap_to_enter">点击进入安全空间</string>
+    <string name="recording_started">录屏已启动</string>
+    <string name="recording_stopped">录屏已停止</string>
+
+    <!-- Guided Interview -->
+    <string name="interview_intro">我会陪你回顾发生的事</string>
+    <string name="state_confirm_safety">让我们先确认一下环境安全</string>
+    <string name="state_free_narration">请告诉我发生了什么</string>
+    <string name="state_elements_inquiry">我想更清楚地了解一些细节</string>
+    <string name="state_evidence_display">你可以展示相关的证据吗</string>
+    <string name="state_supplementary">还有什么想补充的吗</string>
+    <string name="interview_complete">回顾完成，感谢你的信任</string>
+
+    <!-- Evidence Package -->
+    <string name="generating_evidence">正在生成证据包…</string>
+    <string name="evidence_ready">证据包已就绪</string>
+    <string name="save_locally">本地加密保存</string>
+    <string name="share_to_school">提交学校</string>
+    <string name="share_to_parent">分享给家长</string>
+
+    <!-- Parent Mode -->
+    <string name="welcome_parent">家长您好</string>
+    <string name="observation_hint">记录您观察到的孩子异常行为</string>
+    <string name="analyzing">正在分析…</string>
+    <string name="risk_level">风险等级</string>
+    <string name="suggested_script">建议沟通话术</string>
+
+    <!-- Risk Levels -->
+    <string name="risk_green">需要关注</string>
+    <string name="risk_yellow">需要警惕</string>
+    <string name="risk_red">需要立即关注</string>
+
+    <!-- Common -->
+    <string name="cancel">取消</string>
+    <string name="confirm">确认</string>
+    <string name="save">保存</string>
+    <string name="next">下一步</string>
+    <string name="back">返回</string>
+    <string name="error_occurred">发生错误</string>
+    <string name="try_again">重试</string>
+
+    <!-- Security -->
+    <string name="tamper_detected">检测到安全威胁，证据已锁定</string>
+    <string name="encryption_failed">加密失败</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_recording">证据录制</string>
+    <string name="notification_channel_time">时间锚定</string>
+    <string name="notification_recording_title">正在录制证据</string>
+    <string name="notification_recording_text">请放心使用，应用已在后台安静录制</string>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors - Calming Teal -->
+    <color name="primary">#00838F</color>
+    <color name="primary_variant">#006064</color>
+    <color name="on_primary">#FFFFFF</color>
+
+    <!-- Secondary Colors - Soft Purple -->
+    <color name="secondary">#7E57C2</color>
+    <color name="secondary_variant">#5E35B1</color>
+    <color name="on_secondary">#FFFFFF</color>
+
+    <!-- Background Colors -->
+    <color name="background">#FAFAFA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="on_background">#1C1B1F</color>
+    <color name="on_surface">#1C1B1F</color>
+
+    <!-- Risk Level Colors -->
+    <color name="risk_green">#4CAF50</color>
+    <color name="risk_yellow">#FFC107</color>
+    <color name="risk_red">#F44336</color>
+
+    <!-- Status Colors -->
+    <color name="error">#B3261E</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="success">#2E7D32</color>
+    <color name="warning">#ED6C02</color>
+
+    <!-- Calculator Theme (for disguise) -->
+    <color name="calculator_background">#E0E0E0</color>
+    <color name="calculator_button">#FFFFFF</color>
+    <color name="calculator_operator">#FF9800</color>
+    <color name="calculator_display">#212121</color>
+</resources>

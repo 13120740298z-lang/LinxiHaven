@@ -1,0 +1,30 @@
+# LinxiHaven 代码规范配置
+# 基于 kotlinlang.org 官方风格指南
+
+# ========== 通用设置 ==========
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 120
+
+# ========== Kotlin 特定设置 ==========
+[*.kt]
+kotlin_imports_layout = *,^
+kotlin_experimental.uniform_user_imports = true
+kotlin_contracts.contractEffects = none
+
+# ========== Markdown 设置 ==========
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = off
+
+# ========== YAML 设置 ==========
+[*.{yml,yaml}]
+indent_size = 2
+
+# ========== JSON 设置 ==========
+[*.json]
+indent_size = 2

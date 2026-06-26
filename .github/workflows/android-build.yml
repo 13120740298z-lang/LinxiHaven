@@ -1,0 +1,167 @@
+# ╔════════════════════════════════════════════════════════╗
+# ║     证言 Testimony.ai - Android APK 打包工作流           ║
+# ║                                                        ║
+# ║  触发方式：                                             ║
+# ║  - push 到 main 分支时自动构建                          ║
+# ║  - 手动触发 (workflow_dispatch)                           ║
+# ║  - 发布 Release 时自动构建                               ║
+# ║                                                        ║
+# ║  输出产物：                                             ║
+# ║  - debug APK (用于测试)                                  ║
+# ║  - release AAB (用于提交 Google Play)                    ║
+# ╚════════════════════════════════════════════════════════╝
+
+name: 📱 Build Android APK
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'linxihaven/testimony/**'
+      - '.github/workflows/android-build.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: '构建类型'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
+
+env:
+  JAVA_VERSION: '17'
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+
+jobs:
+  build-android:
+    name: 🔨 构建 Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      # ========== 1. 检出代码 ==========
+      - name: 📥 检出仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ========== 2. 设置 Java ==========
+      - name: ☕ 设置 JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      # ========== 3. 缓存 Gradle ==========
+      - name: 💾 缓存 Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('linxihaven/**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      # ========== 4. 授予 Gradle 执行权限 ==========
+      - name: 🔓 授权 Gradlew
+        run: |
+          cd linxihaven
+          chmod +x gradlew
+
+      # ========== 5. 构建 Debug APK ==========
+      - name: 🔨 构建 Debug APK
+        if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == ''
+        run: |
+          cd linxihaven
+          ./gradlew assembleDebug --no-daemon --stacktrace
+          
+      # ========== 6. 构建 Release AAB ==========
+      - name: 🔒 构建 Release AAB (签名)
+        if: github.event.inputs.build_type == 'release' && startsWith(github.ref, 'refs/tags/v')
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          cd linxihaven
+          
+          # 解码签名密钥
+          echo "$KEYSTORE_BASE64" | base64 --decode > app/keystore.jks
+          
+          # 创建 keystore 配置
+          cat > signing.properties << EOF
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=keystore.jks
+          EOF
+          
+          # 构建签名的 Release AAB
+          ./gradlew bundleRelease --no-daemon --stacktrace
+          
+          # 清理敏感文件
+          rm -f app/keystore.jks app/signing.properties
+
+      # ========== 7. 上传产物 ==========
+      - name: 📦 上传 Debug APK
+        if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: testimony-debug-apk
+          path: linxihaven/testimony/build/outputs/apk/debug/*.apk
+          retention-days: 30
+
+      - name: 📦 上传 Release AAB
+        if: github.event.inputs.build_type == 'release' && startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: testimony-release-aab
+          path: linxihaven/testimony/build/outputs/bundle/release/*.aab
+          retention-days: 90
+
+      # ========== 8. 创建 Release（仅 tag 触发时）==========
+      - name: 🏷️ 创建 GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            linxihaven/testimony/build/outputs/bundle/release/*.aab
+          body: |
+            ## 证言 Testimony.ai v${GITHUB_REF_NAME#refs/tags/v}
+            
+            ### 🔐 防伪存证系统
+            
+            **核心功能：**
+            - SHA-256 数字指纹生成（本地计算，不上传服务器）
+            - 多源时间锚定证明文件存在性
+            - 防伪证书生成与展示
+            - 独立验证流程指南
+            
+            **安装说明：**
+            1. 下载 `testimony-release.aab`
+            2. 使用 [bundletool](https://github.com/google/bundletool) 或上传到 Google Play
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ========== 9. 构建摘要 ==========
+      - name: 📊 构建摘要
+        if: always()
+        run: |
+          echo "## 🔨 构建结果" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 项目 | 值 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| 分支 | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo"| 提交 | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| 触发事件 | \`${{ github.event_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| 构建类型 | `${{ github.event.inputs.build_type || 'debug' }}` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 APK 信息" >> $GITHUB_STEP_SUMMARY
+          ls -lh linxihaven/testimony/build/outputs/apk/debug/*.apk 2>/dev/null | awk '{print "| 文件大小 | "$5" |"}' >> $GITHUB_STEP_SUMMARY || echo "Debug APK 未生成" >> $GITHUB_STEP_SUMMARY

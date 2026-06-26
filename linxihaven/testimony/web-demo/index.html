@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>证言 Testimony.ai - AI深伪时代青少年霸凌事件可信存证系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div id="loading-screen" class="loading-screen active">
+        <div class="loader-container">
+            <div class="shield-icon">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <h2>证言 <span class="highlight">Testimony.ai</span></h2>
+            <p class="subtitle">AI深伪时代青少年霸凌事件可信存证系统</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用容器 -->
+    <div id="app" class="app-container hidden">
+        
+        <!-- ========== 伪装计算器界面 ========== -->
+        <div id="screen-calculator" class="screen active">
+            <div class="calculator-container">
+                <div class="calc-header">
+                    <span class="time-display" id="calc-time">12:00</span>
+                    <div class="status-icons">
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+                <div class="calc-display" id="calc-display">0</div>
+                <div class="calc-buttons">
+                    <button class="btn btn-function" data-action="clear">AC</button>
+                    <button class="btn btn-function" data-action="negate">±</button>
+                    <button class="btn btn-function" data-action="percent">%</button>
+                    <button class="btn btn-operator" data-action="operator" data-value="/">÷</button>
+                    
+                    <button class="btn btn-number" data-action="number" data-value="7">7</button>
+                    <button class="btn btn-number" data-action="number" data-value="8">8</button>
+                    <button class="btn btn-number" data-action="number" data-value="9">9</button>
+                    <button class="btn btn-operator" data-action="operator" data-value="*">×</button>
+                    
+                    <button class="btn btn-number" data-action="number" data-value="4">4</button>
+                    <button class="btn btn-number" data-action="number" data-value="5">5</button>
+                    <button class="btn btn-number" data-action="number" data-value="6">6</button>
+                    <button class="btn btn-operator" data-action="operator" data-value="-">−</button>
+                    
+                    <button class="btn btn-number" data-action="number" data-value="1">1</button>
+                    <button class="btn btn-number" data-action="number" data-value="2">2</button>
+                    <button class="btn btn-number" data-action="number" data-value="3">3</button>
+                    <button class="btn btn-operator" data-action="operator" data-value="+">+</button>
+                    
+                    <button class="btn btn-number btn-zero" data-action="number" data-value="0">0</button>
+                    <button class="btn btn-number" data-action="decimal">.</button>
+                    <button class="btn btn-equals" data-action="equals">=</button>
+                </div>
+            </div>
+            
+            <!-- 秘密手势提示 -->
+            <div class="secret-gesture-hint">
+                <i class="fas fa-lock"></i>
+                连续点击屏幕左上角 6 次 进入系统
+            </div>
+        </div>
+
+        <!-- ========== PIN输入界面 ========== -->
+        <div id="screen-pin" class="screen">
+            <div class="pin-container">
+                <div class="pin-header">
+                    <i class="fas fa-shield-halved shield-logo"></i>
+                    <h2>证言</h2>
+                    <p>输入PIN码退出伪装模式</p>
+                </div>
+                
+                <div class="pin-dots" id="pin-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                
+                <div id="pin-error" class="pin-error hidden">PIN码错误，请重试</div>
+                
+                <div class="pin-keypad">
+                    <button class="keypad-btn" data-key="1">1</button>
+                    <button class="keypad-btn" data-key="2">2</button>
+                    <button class="keypad-btn" data-key="3">3</button>
+                    <button class="keypad-btn" data-key="4">4</button>
+                    <button class="keypad-btn" data-key="5">5</button>
+                    <button class="keypad-btn" data-key="6">6</button>
+                    <button class="keypad-btn" data-key="7">7</button>
+                    <button class="keypad-btn" data-key="8">8</button>
+                    <button class="keypad-btn" data-key="9">9</button>
+                    <button class="keypad-btn keypad-cancel" data-action="cancel">取消</button>
+                    <button class="keypad-btn" data-key="0">0</button>
+                    <button class="keypad-btn keypad-delete" data-action="delete"><i class="fas fa-backspace"></i></button>
+                </div>
+                
+                <p class="pin-hint">默认PIN: <strong>123456</strong></p>
+            </div>
+        </div>
+
+        <!-- ========== 模式选择界面 ========== -->
+        <div id="screen-mode-selection" class="screen">
+            <div class="mode-container">
+                <header class="mode-header">
+                    <div class="brand">
+                        <i class="fas fa-shield-halved brand-icon"></i>
+                        <h1>证言 <span class="brand-subtitle">Testimony.ai</span></h1>
+                    </div>
+                    <p class="tagline">AI深伪时代青少年霸凌事件可信存证系统</p>
+                </header>
+
+                <div class="mode-cards">
+                    <!-- 学生模式卡片 -->
+                    <div class="mode-card student-mode" onclick="selectMode('student')">
+                        <div class="card-icon student-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h3>我是学生</h3>
+                        <p>记录霸凌或网络暴力事件<br>独立完成可信证据固定</p>
+                        <ul class="features-list">
+                            <li><i class="fas fa-check-circle"></i> AI引导式事件回顾</li>
+                            <li><i class="fas fa-check-circle"></i> 多源时间戳锚定</li>
+                            <li><i class="fas fa-check-circle"></i> 司法级证据包生成</li>
+                        </ul>
+                        <div class="card-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+
+                    <!-- 家长模式卡片 -->
+                    <div class="mode-card parent-mode" onclick="selectMode('parent')">
+                        <div class="card-icon parent-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>我是家长</h3>
+                        <p>观察孩子异常行为<br>获取专业沟通建议</p>
+                        <ul class="features-list">
+                            <li><i class="fas fa-check-circle"></i> 碎片化观察记录</li>
+                            <li><i class="fas fa-check-circle"></i> AI风险评估分析</li>
+                            <li><i class="fas fa-check-circle"></i> 精确沟通脚本生成</li>
+                        </ul>
+                        <div class="card-arrow"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+                </div>
+
+                <!-- 底部信息 -->
+                <footer class="mode-footer">
+                    <div class="trust-badges">
+                        <div class="badge">
+                            <i class="fas fa-gavel"></i>
+                            <span>司法级存证</span>
+                        </div>
+                        <div class="badge">
+                            <i class="fas fa-user-shield"></i>
+                            <span>隐私隔离</span>
+                        </div>
+                        <div class="badge">
+                            <i class="fas fa-brain"></i>
+                            <span>AI安全引导</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- ========== 学生端主界面 ========== -->
+        <div id="screen-student-home" class="screen">
+            <nav class="student-nav">
+                <div class="nav-brand" onclick="navigateTo('mode_selection')">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </div>
+                <h2>学生工作台</h2>
+                <div class="nav-status">
+                    <span class="status-dot online"></span>
+                    安全空间就绪
+                </div>
+            </nav>
+
+            <div class="student-content">
+                <!-- 核心操作卡片 -->
+                <div class="action-grid">
+                    <div class="action-card primary-action" onclick="startSecuritySpace()">
+                        <div class="action-icon pulse">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3>启动安全空间</h3>
+                        <p>一键进入录屏+时间锚定+通知静音</p>
+                        <div class="action-badge">核心功能</div>
+                    </div>
+
+                    <div class="action-card" onclick="startGuidedInterview()">
+                        <div class="action-icon ai-glow">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>AI引导访谈</h3>
+                        <p>五阶段司法级引导流程</p>
+                    </div>
+
+                    <div class="action-card" onclick="showEvidencePreview()">
+                        <div class="action-icon">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <h3>证据管理</h3>
+                        <p>查看和管理已生成的证据包</p>
+                    </div>
+                </div>
+
+                <!-- 系统状态面板 -->
+                <div class="status-panel">
+                    <h4><i class="fas fa-chart-pie"></i> 系统状态</h4>
+                    <div class="status-items">
+                        <div class="status-item">
+                            <span class="label">时间锚定</span>
+                            <span class="value success" id="time-anchor-status">
+                                <i class="fas fa-check-circle"></i> 四源就绪
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">加密引擎</span>
+                            <span class="value success">
+                                <i class="fas fa-lock"></i> AES-256-GCM
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">诱导性检测</span>
+                            <span class="value success">
+                                <i class="fas fa-shield-halved"></i> 15条规则激活
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">隐私防火墙</span>
+                            <span class="value success">
+                                <i class="fas fa-fire"></i> 严格隔离
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快速统计 -->
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-sessions">0</div>
+                        <div class="stat-label">存证会话</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-packages">0</div>
+                        <div class="stat-label">证据包</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-elements">0/6</div>
+                        <div class="stat-label">要素覆盖</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 安全空间界面 ========== -->
+        <div id="screen-security-space" class="screen">
+            <div class="security-overlay">
+                <div class="security-content">
+                    <div class="recording-indicator">
+                        <div class="rec-dot recording"></div>
+                        <span>安全空间运行中</span>
+                    </div>
+                    
+                    <div class="security-timer" id="security-timer">00:00:00</div>
+                    
+                    <div class="security-features">
+                        <div class="feature-item active">
+                            <i class="fas fa-video"></i>
+                            <span>录屏中</span>
+                        </div>
+                        <div class="feature-item active">
+                            <i class="fas fa-clock"></i>
+                            <span>时间锚定</span>
+                        </div>
+                        <div class="feature-item active">
+                            <i class="fas fa-bell-slash"></i>
+                            <span>通知静音</span>
+                        </div>
+                        <div class="feature-item active">
+                            <i class="fas fa-fingerprint"></i>
+                            <span>传感器记录</span>
+                        </div>
+                    </div>
+
+                    <div class="timestamp-display">
+                        <h4>四源时间戳</h4>
+                        <div class="source-times">
+                            <div class="source-time">
+                                <span class="source-label">系统</span>
+                                <span class="source-value" id="ts-system">--:--:--</span>
+                            </div>
+                            <div class="source-time">
+                                <span class="source-label">NTP</span>
+                                <span class="source-value" id="ts-ntp">--:--:--</span>
+                            </div>
+                            <div class="source-time">
+                                <span class="source-label">基站</span>
+                                <span class="source-value" id="ts-cell">--:--:--</span>
+                            </div>
+                            <div class="source-time">
+                                <span class="source-label">区块链</span>
+                                <span class="source-value" id="ts-blockchain">--:--:--</span>
+                            </div>
+                        </div>
+                        <div class="consensus-info">
+                            融合置信度: <strong id="confidence-level">HIGH</strong>
+                        </div>
+                    </div>
+
+                    <div class="security-actions">
+                        <button class="btn-stop" onclick="exitSecuritySpace()">
+                            <i class="fas fa-stop-circle"></i>
+                            结束并生成证据包
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 引导式访谈界面 ========== -->
+        <div id="screen-interview" class="screen">
+            <div class="interview-container">
+                <header class="interview-header">
+                    <button class="back-btn" onclick="navigateTo('student-home')">
+                        <i class="fas fa-times"></i> 结束访谈
+                    </button>
+                    <div class="interview-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="interview-progress" style="width: 20%"></div>
+                        </div>
+                        <span class="progress-text" id="interview-step-text">1/5 稳定化</span>
+                    </div>
+                </header>
+
+                <div class="chat-area" id="chat-area">
+                    <!-- AI消息会动态添加到这里 -->
+                </div>
+
+                <div class="input-area">
+                    <div class="emotion-indicators" id="emotion-indicators">
+                        <!-- 动态显示检测到的情绪 -->
+                    </div>
+                    <textarea 
+                        id="user-input" 
+                        placeholder="在这里输入你的想法...AI会仔细倾听"
+                        rows="3"
+                    ></textarea>
+                    <div class="input-actions">
+                        <button class="send-btn" onclick="sendUserMessage()">
+                            <i class="fas fa-paper-plane"></i> 发送
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 要素收集进度 -->
+                <div class="elements-tracker">
+                    <h4>事件要素覆盖</h4>
+                    <div class="element-tags" id="element-tags">
+                        <span class="el-tag pending" data-element="time">⏰ 时间</span>
+                        <span class="el-tag pending" data-element="location">📍 地点</span>
+                        <span class="el-tag pending" data-element="persons">👥 人物</span>
+                        <span class="el-tag pending" data-element="behavior">📝 行为</span>
+                        <span class="el-tag pending" data-element="evidence">📎 证据</span>
+                        <span class="el-tag pending" data-element="consequence">💔 后果</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 家长端主界面 ========== -->
+        <div id="screen-parent-home" class="screen">
+            <nav class="parent-nav">
+                <div class="nav-brand" onclick="navigateTo('mode_selection')">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </div>
+                <h2>家长工作台</h2>
+            </nav>
+
+            <div class="parent-content">
+                <!-- 观察记录区 -->
+                <div class="observation-section">
+                    <h3><i class="fas fa-eye"></i> 记录您的观察</h3>
+                    <p class="section-desc">描述您注意到孩子的任何异常行为或变化</p>
+                    
+                    <div class="observation-inputs">
+                        <textarea 
+                            id="parent-observation" 
+                            placeholder="例如：最近孩子回家后经常锁门，吃饭时心不在焉..."
+                            rows="4"
+                        ></textarea>
+                        
+                        <div class="quick-tags">
+                            <span class="q-tag" onclick="addObservationTag('不想上学')">不想上学</span>
+                            <span class="q-tag" onclick="addObservationTag('情绪低落')">情绪低落</span>
+                            <span class="q-tag" onclick="addObservationTag('睡眠问题')">睡眠问题</span>
+                            <span class="q-tag" onclick="addObservationTag('成绩下降')">成绩下降</span>
+                            <span class="q-tag" onclick="addObservationTag('社交回避')">社交回避</span>
+                            <span class="q-tag" onclick="addObservationTag('身体不适')">身体不适</span>
+                        </div>
+
+                        <button class="analyze-btn" onclick="analyzeObservation()">
+                            <i class="fas fa-brain"></i> AI智能分析
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 分析结果区 -->
+                <div class="analysis-result" id="analysis-result" style="display:none;">
+                    <div class="risk-assessment">
+                        <h4><i class="fas fa-chart-line"></i> 风险评估结果</h4>
+                        <div class="risk-meter">
+                            <div class="risk-level" id="risk-level-display">
+                                <span class="risk-indicator"></span>
+                                <span class="risk-text" id="risk-text">评估中...</span>
+                            </div>
+                        </div>
+                        <div class="pressure-source" id="pressure-source">
+                            <h5>可能压力源</h5>
+                            <ul id="pressure-list"></ul>
+                        </div>
+                    </div>
+
+                    <div class="communication-script" id="communication-script">
+                        <h4><i class="fas fa-comments"></i> 建议沟通脚本</h4>
+                        <div class="script-content" id="script-content">
+                            <!-- 动态填充 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 隐私说明 -->
+                <div class="privacy-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <p><strong>隐私保护承诺：</strong>您只能看到AI生成的风险评估和建议，无法访问学生端的原始记录内容。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 证据预览界面 ========== -->
+        <div id="screen-evidence-preview" class="screen">
+            <nav class="evidence-nav">
+                <div class="nav-brand" onclick="navigateTo('student-home')">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </div>
+                <h2>证据包详情</h2>
+            </nav>
+
+            <div class="evidence-content">
+                <!-- 证据包概览 -->
+                <div class="package-overview">
+                    <div class="overview-card">
+                        <div class="ov-icon"><i class="fas fa-archive"></i></div>
+                        <div class="ov-details">
+                            <h3>最新证据包</h3>
+                            <span class="ov-id" id="pkg-id">EP_待生成</span>
+                            <span class="ov-time" id="pkg-time">--</span>
+                        </div>
+                        <div class="ov-status" id="pkg-status">
+                            <span class="badge badge-warning">待生成</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 完整性清单 -->
+                <div class="manifest-section">
+                    <h4><i class="fas fa-clipboard-check"></i> 完整性清单</h4>
+                    <div class="manifest-items">
+                        <div class="manifest-item" id="mf-recording">
+                            <i class="fas fa-video"></i>
+                            <span>录屏视频 (含帧时间戳)</span>
+                            <span class="status pending">待确认</span>
+                        </div>
+                        <div class="manifest-item" id="mf-operation">
+                            <i class="fas fa-mouse-pointer"></i>
+                            <span>操作日志流</span>
+                            <span class="status pending">待确认</span>
+                        </div>
+                        <div class="manifest-item" id="mf-sensor">
+                            <i class="fas fa-microchip"></i>
+                            <span>传感器数据日志</span>
+                            <span class="status pending">待确认</span>
+                        </div>
+                        <div class="manifest-item" id="mf-timestamp">
+                            <i class="fas fa-clock"></i>
+                            <span>多源时间戳序列</span>
+                            <span class="status pending">待确认</span>
+                        </div>
+                        <div class="manifest-item" id="mf-fsm">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>FSM状态转换日志</span>
+                            <span class="status pending">待确认</span>
+                        </div>
+                        <div class="manifest-item" id="mf-merkle">
+                            <i class="fas fa-tree"></i>
+                            <span>Merkle树根哈希</span>
+                            <span class="status pending">待确认</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Merkle树可视化 -->
+                <div class="merkle-viz">
+                    <h4><i class="fas fa-sitemap"></i> Merkle树完整性验证</h4>
+                    <canvas id="merkle-canvas" width="400" height="200"></canvas>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="evidence-actions">
+                    <button class="action-btn primary" onclick="generateEvidencePackage()">
+                        <i class="fas fa-cogs"></i> 生成加密证据包
+                    </button>
+                    <button class="action-btn secondary">
+                        <i class="fas fa-download"></i> 导出报告
+                    </button>
+                    <button class="action-btn tertiary">
+                        <i class="fas fa-share-alt"></i> 安全分享
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 司法准备度报告界面 ========== -->
+        <div id="screen-readiness-report" class="screen">
+            <nav class="report-nav">
+                <div class="nav-brand" onclick="navigateTo('student-home')">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </div>
+                <h2>司法采纳准备度报告</h2>
+            </nav>
+
+            <div class="report-content">
+                <!-- 总体评分 -->
+                <div class="overall-score-section">
+                    <div class="score-ring" id="score-ring">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#e0e0e0" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2563eb" stroke-width="8" 
+                                    stroke-dasharray="283" stroke-dashoffset="56" stroke-linecap="round"
+                                    transform="rotate(-90 50 50)"/>
+                        </svg>
+                        <div class="score-text">
+                            <span class="score-number" id="overall-score">80%</span>
+                            <span class="score-label">综合评分</span>
+                        </div>
+                    </div>
+                    <div class="adoption-level">
+                        <span class="level-badge level-school" id="adoption-level">SCHOOL_READY</span>
+                        <span class="level-desc" id="level-desc">学校可用级别</span>
+                    </div>
+                </div>
+
+                <!-- 分项评分 -->
+                <div class="dimension-scores">
+                    <div class="dim-score">
+                        <div class="dim-header">
+                            <i class="fas fa-link"></i> 证据链完整度
+                        </div>
+                        <div class="dim-bar">
+                            <div class="dim-fill" id="dim-evidence" style="width: 87.5%"></div>
+                        </div>
+                        <span class="dim-percent">87.5%</span>
+                    </div>
+                    <div class="dim-score">
+                        <div class="dim-header">
+                            <i class="fas fa-clock"></i> 时间抗篡改能力
+                        </div>
+                        <div class="dim-bar">
+                            <div class="dim-fill" id="dim-time" style="width: 100%"></div>
+                        </div>
+                        <span class="dim-percent">100%</span>
+                    </div>
+                    <div class="dim-score">
+                        <div class="dim-header">
+                            <i class="fas fa-robot"></i> AI引导合规性
+                        </div>
+                        <div class="dim-bar">
+                            <div class="dim-fill" id="dim-ai" style="width: 75%"></div>
+                        </div>
+                        <span class="dim-percent">75%</span>
+                    </div>
+                    <div class="dim-score">
+                        <div class="dim-header">
+                            <i class="fas fa-user-shield"></i> 隐私隔离有效性
+                        </div>
+                        <div class="dim-bar">
+                            <div class="dim-fill" id="dim-privacy" style="width: 100%"></div>
+                        </div>
+                        <span class="dim-percent">100%</span>
+                    </div>
+                </div>
+
+                <!-- 技术亮点 -->
+                <div class="tech-highlights">
+                    <h4><i class="fas fa-star"></i> 技术创新亮点</h4>
+                    <div class="highlights-grid">
+                        <div class="highlight-item">
+                            <i class="fas fa-medal"></i>
+                            <h5>端侧可信存证协议栈</h5>
+                            <p>在普通消费级手机上实现司法级证据固定</p>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-audit"></i>
+                            <h5>可审计AI引导</h5>
+                            <p>有限状态机替代开放式对话，全程可追溯</p>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-network-wired"></i>
+                            <h5>多源交叉校验时间锚定</h5>
+                            <p>四源(系统/NTP/基站/区块头)交叉验证</p>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-random"></i>
+                            <h5>多模态交叉验证</h5>
+                            <p>物理级日志同步对抗AI深度伪造</p>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-door-closed"></i>
+                            <h5>隐私隔离架构</h5>
+                            <p>学生端/家长端数据严格隔离，未成年人完全自主</p>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-gavel"></i>
+                            <h5>深伪时代叙事</h5>
+                            <p>直接回应最高法、最高检对AI深伪证据危机研判</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- API配置弹窗 -->
+    <div id="api-config-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3><i class="fas fa-key"></i> API配置</h3>
+            <p>请配置AI服务API密钥以启用实时对话功能</p>
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="password" id="api-key-input" placeholder="sk-..." value="">
+            </div>
+            <div class="form-group">
+                <label>API Endpoint</label>
+                <input type="text" id="api-endpoint-input" placeholder="https://api.qnaigc.com/v1" value="https://api.qnaigc.com/v1">
+            </div>
+            <div class="form-group">
+                <label>模型名称</label>
+                <input type="text" id="api-model-input" placeholder="deepseek-v3" value="deepseek-v3">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeApiConfig()">取消</button>
+                <button class="btn-primary" onclick="saveApiConfig()">保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>证言 Testimony.ai v3.0 - 防伪存证系统</title>
+    <style>
+        :root {
+            --bg: #f0f4ff; --card: #fff; --border: #d0d8f0;
+            --primary: #4f46e5; --primary-dark: #3730a3; --primary-light: #eef2ff;
+            --ink: #0f172a; --muted: #64748b; --success: #059669;
+            --warn: #d97706; --danger: #dc2626;
+            --gradient-hero: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
+            --shadow-sm: 0 1px 3px rgba(15,23,42,0.06);
+            --shadow-md: 0 4px 16px rgba(15,23,42,0.08);
+            --shadow-lg: 0 12px 36px rgba(79,70,229,0.18);
+            --radius: 16px; --transition: all 0.25s ease;
+        }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; }
+
+        /* Hero */
+        .hero { background:var(--gradient-hero); color:#fff; padding:52px 24px 44px; text-align:center; position:relative; overflow:hidden; }
+        .hero::before{content:'';position:absolute;top:-40%;left:-20%;width:140%;height:180%;background:radial-gradient(circle at 30% 35%,rgba(255,255,255,0.1),transparent 60%);pointer-events:none;}
+        .hero-content{position:relative;z-index:1;max-width:880px;margin:0 auto;}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.18);backdrop-filter:blur(10px);padding:8px 18px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:18px;}
+        .hero h1{font-size:clamp(28px,5vw,40px);font-weight:800;line-height:1.15;margin-bottom:14px;}
+        .hero p{font-size:15.5px;opacity:0.92;max-width:700px;margin:0 auto;line-height:1.75;}
+
+        .shell{max-width:1240px;margin:-28px auto 48px;padding:0 20px;position:relative;z-index:2;}
+        
+        .status-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:22px;box-shadow:var(--shadow-md);}
+        .status-group{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+        .pill{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;background:var(--primary-light);color:var(--primary-dark);}
+        .pill.success{background:#ecfdf5;color:var(--success);}
+
+        .grid{display:grid;grid-template-columns:1.35fr 1fr;gap:22px;}@media(max-width:1000px){.grid{grid-template-columns:1fr;}}
+        .column{display:flex;flex-direction:column;gap:22px;}
+
+        .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow-md);transition:var(--transition);}
+        .card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+        .card h2,.card h3{margin:0 0 14px;font-size:17px;font-weight:700;}
+        .card p{color:var(--muted);line-height:1.75;font-size:14.5px;}
+        .section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px;}
+        .tag{display:inline-block;padding:5px 13px;border-radius:999px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:11px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;}
+
+        /* Tabs */
+        .tabs{display:flex;gap:8px;margin-bottom:20px;background:#f1f5f9;padding:6px;border-radius:14px;}
+        .tab{flex:1;border:none;background:transparent;color:var(--muted);border-radius:10px;padding:13px 14px;cursor:pointer;font-size:14px;font-weight:700;transition:var(--transition);}
+        .tab.active{background:#fff;color:var(--primary-dark);box-shadow:var(--shadow-sm);}
+        .panel{display:none;animation:fadeIn 0.35s ease-out;}
+        .panel.active{display:block;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+        /* Chat */
+        .chat-log{min-height:340px;max-height:480px;overflow-y:auto;padding:18px;border-radius:14px;background:#f8fafc;border:1px solid var(--border);scroll-behavior:smooth;}
+        .chat-log::-webkit-scrollbar{width:6px;}.chat-log::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+        .message{margin-bottom:14px;padding:13px 16px;border-radius:14px;line-height:1.75;font-size:14.5px;white-space:pre-wrap;animation:msgIn 0.3s ease-out;}
+        @keyframes msgIn{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
+        .message.ai{background:#fff;border:1px solid #e2e8f0;border-bottom-left-radius:4px;}
+        .message.user{margin-left:auto;background:linear-gradient(135deg,var(--primary),#6366f1);color:#fff;max-width:88%;border-bottom-right-radius:4px;box-shadow:0 4px 12px rgba(79,70,229,0.25);}
+        .message.system{background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fcd34d;color:#78350f;font-size:13.5px;}
+
+        .typing-indicator{display:inline-flex;gap:5px;padding:14px 18px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;border-bottom-left-radius:4px;}
+        .typing-indicator span{width:8px;height:8px;background:#94a3b8;border-radius:50%;animation:bounce 1.4s infinite;}
+        .typing-indicator span:nth-child(2){animation-delay:.2s;}.typing-indicator span:nth-child(3){animation-delay:.4s;}
+        @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-8px);opacity:1;}}
+
+        /* Input */
+        input,textarea,button,select{font:inherit;}
+        input,textarea{width:100%;border:2px solid #e2e8f0;border-radius:14px;padding:15px 18px;background:#fff;color:var(--ink);font-size:15px;outline:none;transition:var(--transition);}
+        input:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(79,70,229,0.1);}
+        textarea{min-height:120px;resize:vertical;}
+        .input-row,.textarea-row{display:flex;gap:12px;margin-top:14px;}
+        .btn{border:none;border-radius:14px;padding:15px 22px;background:linear-gradient(135deg,var(--primary),#6366f1);color:#fff;font-weight:700;cursor:pointer;font-size:14.5px;transition:var(--transition);white-space:nowrap;box-shadow:0 4px 14px rgba(79,70,229,0.3);}
+        .btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(79,70,229,0.4);}
+        .btn.secondary{background:#fff;color:var(--primary-dark);border:2px solid var(--primary);box-shadow:none;}
+        .btn:disabled{cursor:not-allowed;opacity:.5;transform:none!important;box-shadow:none!important;}
+
+        /* Fact grid */
+        .fact-grid,.metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+        .fact-item,.metric{background:linear-gradient(145deg,#f8fafc,#f1f5f9);border:1px solid #e2e8f0;border-radius:12px;padding:15px;transition:var(--transition);}
+        .fact-item strong,.metric strong{display:block;margin-bottom:7px;font-size:12px;font-weight:700;color:var(--muted);}
+        .fact-item span,.metric span{font-size:14px;line-height:1.6;}
+        .hint{margin-top:14px;color:var(--muted);font-size:13px;padding:12px 16px;background:#f8fafc;border-radius:12px;border-left:3px solid var(--primary);}
+        .hidden{display:none!important;}
+
+        /* ★★★ 文件上传区域 ★★★ */
+        .upload-zone{
+            border:3px dashed #c7d2fe;border-radius:18px;padding:36px 24px;text-align:center;
+            background:linear-gradient(145deg,#eef2ff,#f5f3ff);cursor:pointer;
+            transition:all 0.3s ease;position:relative;overflow:hidden;
+        }
+        .upload-zone:hover{border-color:var(--primary);background:linear-gradient(145deg,#e0e7ff,#ede9fe);transform:scale(1.01);}
+        .upload-zone.dragover{border-color:var(--primary);background:#ddd6fe;transform:scale(1.02);}
+        .upload-zone-icon{font-size:48px;margin-bottom:12px;}
+        .upload-zone-text{font-size:15px;color:#4338ca;font-weight:700;margin-bottom:6px;}
+        .upload-zone-sub{font-size:13px;color:var(--muted);}
+        #file-input{display:none;}
+        .file-list{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+        .file-item{display:flex;align-items:center;gap:12px;padding:14px 18px;background:#f0fdf4;border:1px solid#bbf7d0;border-radius:14px;}
+        .file-item-icon{font-size:28px;}
+        .file-item-info{flex:1;}
+        .file-item-name{font-weight:600;font-size:14px;}
+        .file-item-size{font-size:12px;color:var(--muted);}
+        .file-item-remove{cursor:pointer;color:#dc2626;font-weight:700;font-size:18px;padding:4px 8px;border-radius:8px;}
+        .file-item-remove:hover{background:#fee2e2;}
+
+        /* ★★★ 防伪证书样式 ★★★ */
+        .cert-header{text-align:center;padding:24px;background:linear-gradient(135deg,#4f46e5,#7c3aed,#a855f7);border-radius:18px;color:#fff;margin-bottom:20px;}
+        .cert-id{font-family:'Courier New',monospace;font-size:14px;letter-spacing:2px;margin-top:8px;opacity:0.9;}
+        
+        .fingerprint-display{
+            background:linear-gradient(145deg,#1e1b4b,#312e81);border-radius:16px;padding:24px;text-align:center;margin:18px 0;position:relative;overflow:hidden;
+        }
+        .fingerprint-display::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#06b6d4,#8b5cf6,#ec4899,#06b6d4);background-size:300% 100%;animation:shimmer 3s linear infinite;}
+        @keyframes shimmer{to{background-position:-300% 0;}}
+        .fingerprint-label{color:#94a3b8;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+        .fingerprint-value{font-family:'Courier New',monospace;font-size:18px;font-weight:700;color:#67e8f9;letter-spacing:2.5px;word-break:break-all;text-shadow:0 0 20px rgba(103,232,249,0.4);}
+        .fingerprint-algo{color:#a78bfa;font-size:12px;margin-top:10px;}
+
+        .verify-steps{background:#eff6ff;border:1px solid#bfdbfe;border-radius:16px;padding:20px;margin:18px 0;}
+        .verify-step{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid#dbeafe;}
+        .verify-step:last-child{border:none;padding-bottom:0;}
+        .verify-num{width:28px;height:28px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;}
+        .verify-text{font-size:14px;color:#1e40af;line-height:1.65;}
+
+        .cmd-box{background:#1e293b;border-radius:12px;padding:14px 18px;margin:10px 0;font-family:'Courier New',monospace;font-size:12px;color:#38bdf8;overflow-x:auto;}
+        .expected-result{color:#4ade80;font-weight:700;}
+
+        /* 核心价值说明 */
+        .value-proposition{background:linear-gradient(135deg,#fdf4ff,#fae8ff);border:2px solid#e9d5ff;border-radius:18px;padding:22px;margin-top:18px;}
+        .value-title{font-size:17px;font-weight:800;color:#86198f;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+        .value-point{display:flex;gap:10px;margin:10px 0;font-size:14px;line-height:1.65;}
+        .value-check{color:var(--success);font-weight:900;font-size:16px;flex-shrink:0;}
+
+        @media(max-width:680px){
+            .hero{padding:34px 16px 30px;}.hero h1{font-size:25px;}
+            .shell{margin-top:-18px;padding:0 14px;}
+            .status-bar{flex-direction:column;}.tabs,.input-row,.textarea-row,.fact-grid,.metric-grid{flex-direction:column;grid-template-columns:1fr;}
+            .card{padding:20px;}.btn{width:100%;}
+            .fingerprint-value{font-size:13px;letter-spacing:1px;}
+        }
+    </style>
+</head>
+<body>
+
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">🔐 上海市青少年科技创新大赛 · 决赛路演</div>
+        <h1>证言 Testimony.ai v3.0</h1>
+        <p><strong>密码学级防伪存证系统</strong></p>
+        <p style="margin-top:10px;">被质疑"P图"？用证言生成不可伪造的防伪证书。<br>任何人都可以独立验证：你的证据在某个时刻确实存在且100%未被篡改。</p>
+    </div>
+</section>
+
+<main class="shell">
+
+<section class="status-bar">
+    <div class="status-group">
+        <span class="pill">🔒 防伪模式</span>
+        <span class="pill success" id="health-pill">● 连接检测中</span>
+    </div>
+    <div class="status-group">
+        <span class="pill">SHA-256 引擎</span>
+        <span class="pill">时间锚定</span>
+        <span class="pill">可验证证书</span>
+    </div>
+</section>
+
+<section class="grid">
+
+<div class="column">
+
+<!-- 核心交互区 -->
+<section class="card">
+    <div class="section-head"><div><span class="tag">核心功能</span><h2>事件记录 & 防伪存证</h2></div></div>
+    
+    <div class="tabs">
+        <button class="tab active" data-tab="tab-chat">💬 AI引导记录</button>
+        <button class="tab" data-tab="tab-upload">📁 上传证据</button>
+        <button class="tab" data-tab="tab-parent">👨‍👩‍👧 家长分析</button>
+    </div>
+
+    <!-- AI 聊天面板 -->
+    <div id="tab-chat" class="panel active">
+        <div class="chat-log" id="chat-log"></div>
+        <form id="chat-form" class="input-row">
+            <input id="chat-input" placeholder="描述发生的事情...例如：有人在群里辱骂我，我截了图" maxlength="500">
+            <button class="btn" id="send-btn" type="submit">发送</button>
+        </form>
+        <p class="hint">💡 描述事件后，切换到「上传证据」标签页上传截图/录音/视频，生成防伪证书。</p>
+    </div>
+
+    <!-- ★★★ 文件上传面板（核心功能）★★★ -->
+    <div id="tab-upload" class="panel">
+        <div class="upload-zone" id="upload-zone">
+            <div class="upload-zone-icon">📤</div>
+            <div class="upload-zone-text">点击或拖拽上传证据文件</div>
+            <div class="upload-zone-sub">支持截图、照片、录音、视频、PDF等任意文件<br>文件将在本地计算哈希指纹，不会上传到外部服务器</div>
+            <input type="file" id="file-input" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt">
+        </div>
+        <div class="file-list" id="file-list"></div>
+        <div class="input-row" style="margin-top:18px;">
+            <button class="btn" id="certify-btn" type="button" style="flex:1;">
+                🔐 生成防伪存证证书
+            </button>
+        </div>
+        <p class="hint">⚡ 上传文件后点击生成。证书包含该文件的数字指纹(SHA-256)，任何人可用此值验证文件真伪。</p>
+    </div>
+
+    <!-- 家长分析面板 -->
+    <div id="tab-parent" class="panel">
+        <div class="textarea-row">
+            <textarea id="observation-input" placeholder="输入孩子近期的行为变化..."></textarea>
+        </div>
+        <div class="input-row">
+            <button class="btn" id="analyze-btn" type="button">📊 生成风险评估</button>
+            <button class="btn secondary" id="sample-btn" type="button">示例数据</button>
+        </div>
+        <div id="assessment-result" class="hidden" style="margin-top:18px;"></div>
+    </div>
+</section>
+</div>
+
+<div class="column">
+
+<!-- 已收集要素 -->
+<section class="card">
+    <div class="section-head"><div><span class="tag">要素提取</span><h3>已采集信息</h3></div></div>
+    <div class="fact-grid" id="fact-grid"></div>
+    <div class="hint" id="missing-hint">⏳ 待采集：时间、地点、人物、行为、证据载体、后果</div>
+</section>
+
+<!-- ★★★ 防伪证书展示区域 ★★★ -->
+<section class="card">
+    <div class="section-head"><div><span class="tag">防伪证书</span><h3>密码学级存证证明</h3></div></div>
+    <p id="cert-placeholder">上传证据文件后，在此处查看生成的防伪证书。</p>
+    <div id="cert-result" class="hidden"></div>
+</section>
+
+<!-- 产品原理说明 -->
+<section class="card" style="background:linear-gradient(145deg,#eff6ff,#dbeafe);">
+    <div class="value-proposition">
+        <div class="value-title">🎯 为什么这能防止"P图污蔑"？</div>
+        <div class="value-point"><span class="value-check">✓</span><div><strong>数字指纹 = 文件身份证</strong><br>每个文件都有一个唯一的 SHA-256 哈希值（像指纹一样）。哪怕改动1个像素，哈希值都会完全不同。</div></div>
+        <div class="value-point"><span class="value-check">✓</span><div><strong>时间锚定 = 存在证明</strong><br>证书绑定了多源时间戳，证明这个文件在特定时刻已经存在。</div></div>
+        <div class="value-point"><span class="value-check">✓</span><div><strong>独立验证 = 无需信任任何人</strong><br>对方不需要相信你或你的服务器——他们可以用公开算法自己算一遍来验证。</div></div>
+    </div>
+</section>
+
+</div>
+</section>
+
+</main>
+
+<script src="app.js" defer></script>
+</body>
+</html>
