@@ -62,7 +62,6 @@ jobs:
 
       # ========== 5. 构建 Debug APK ==========
       - name: 🔨 构建 Debug APK
-        if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == ''
         run: |
           cd linxihaven/testimony
           ./gradlew assembleDebug --no-daemon --stacktrace --warning-mode all
@@ -93,7 +92,6 @@ jobs:
 
       # ========== 7. 上传产物 ==========
       - name: 📦 上传 Debug APK
-        if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == ''
         uses: actions/upload-artifact@v4
         with:
           name: testimony-debug-apk
